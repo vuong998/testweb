@@ -1,7 +1,0 @@
-How to install?
-
-Unzip "Eos_V2.zip" package in an empty directory on your web server where you want to install the script.
-
-Go to http://www.yourdomain.com/admin/install/ and follow instructions.
-
-Follow step by step wizard to install Eos URL Shortener Script and fill in all the fields that are required.

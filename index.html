@@ -1,33 +1,156 @@
-<script type='text/javascript'>
-// Shorten Blogger post URLs using urltinyfy javascript API, by MS-potilas 2012
-// Updated new shortener by Vinay Prajapati, TechPrevue Labs 2013
-//<![CDATA[
-function loadscript(filename) {
-var scr=document.createElement('script');
-scr.setAttribute("type","text/javascript");
-scr.setAttribute("src",filename);
-document.getElementsByTagName("head")[0].appendChild(scr);
-}
-var waitElm=null;
-function urltinyfyprompt_callback(response) {
-if(waitElm) waitElm.style.display="none";
-var txt="Short URL";
-if(response.title && response.title!="") txt+=' for "'+response.title+'"';
-else if(response.longurl && response.longurl!="") txt+=" for "+response.longurl;
-if(response.tinyurl && response.tinyurl!="")
-prompt(txt+":", response.tinyurl);
-else
-alert("Could not get short URL, try again later." + ((response.error && response.error != "") ? ("nError: " + response.error) : ""));
-}
-function shortenUrl(elm, long_url, service) {
-waitElm=elm.parentNode.nextSibling;
-if(waitElm) waitElm.style.display="inline";
-loadscript("http://urltinyfy.appspot.com/"+service+"?unify=1&url="+encodeURIComponent(long_url) + "&callback=urltinyfyprompt_callback");
-}
-//]]>
-</script>
-<span class='shorturls'>Short URLs:
-<a expr:onclick='&quot;shortenUrl(this, &amp;#39;&quot; + data:post.url + &quot;&amp;#39;, &amp;#39;googl&amp;#39;);return false;&quot;' href='javascript:void(0)' title='Click to get short URL'>goo.gl</a>,
-<a expr:onclick='&quot;shortenUrl(this, &amp;#39;&quot; + data:post.url + &quot;&amp;#39;, &amp;#39;mcafee&amp;#39;);return false;&quot;' href='javascript:void(0)' title='Click to get short URL'>mcaf.ee</a>,
-<a expr:onclick='&quot;shortenUrl(this, &amp;#39;&quot; + data:post.url + &quot;&amp;#39;, &amp;#39;cligs&amp;#39;);return false;&quot;' href='javascript:void(0)' title='Click to get short URL'>cli.gs</a>
-</span><span style='display:none;'><img border='0' src='data:image/gif;base64,R0lGODlhEAALAPQAAP///wAAANra2tDQ0Orq6gYGBgAAAC4uLoKCgmBgYLq6uiIiIkpKSoqKimRkZL6+viYmJgQEBE5OTubm5tjY2PT09Dg4ONzc3PLy8ra2tqCgoMrKyu7u7gAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCwAAACwAAAAAEAALAAAFLSAgjmRpnqSgCuLKAq5AEIM4zDVw03ve27ifDgfkEYe04kDIDC5zrtYKRa2WQgAh+QQJCwAAACwAAAAAEAALAAAFJGBhGAVgnqhpHIeRvsDawqns0qeN5+y967tYLyicBYE7EYkYAgAh+QQJCwAAACwAAAAAEAALAAAFNiAgjothLOOIJAkiGgxjpGKiKMkbz7SN6zIawJcDwIK9W/HISxGBzdHTuBNOmcJVCyoUlk7CEAAh+QQJCwAAACwAAAAAEAALAAAFNSAgjqQIRRFUAo3jNGIkSdHqPI8Tz3V55zuaDacDyIQ+YrBH+hWPzJFzOQQaeavWi7oqnVIhACH5BAkLAAAALAAAAAAQAAsAAAUyICCOZGme1rJY5kRRk7hI0mJSVUXJtF3iOl7tltsBZsNfUegjAY3I5sgFY55KqdX1GgIAIfkECQsAAAAsAAAAABAACwAABTcgII5kaZ4kcV2EqLJipmnZhWGXaOOitm2aXQ4g7P2Ct2ER4AMul00kj5g0Al8tADY2y6C+4FIIACH5BAkLAAAALAAAAAAQAAsAAAUvICCOZGme5ERRk6iy7qpyHCVStA3gNa/7txxwlwv2isSacYUc+l4tADQGQ1mvpBAAIfkECQsAAAAsAAAAABAACwAABS8gII5kaZ7kRFGTqLLuqnIcJVK0DeA1r/u3HHCXC/aKxJpxhRz6Xi0ANAZDWa+kEAA7AAAAAAAAAAAA'/></span><div style='clear:both'/>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+      This is the page head - it contains info the browser uses to display the page
+      You won't see what's in the head in the page
+      Scroll down to the body element for the page content
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="shortcut icon"
+      type="image/jpg"
+      href="https://cdn.glitch.com/d08bb326-e251-4744-9266-f454d653c7c1%2Ffavicon.png?v=1624373448629"
+    />
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/font.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Like Tap - Gặp ai cũng Tap</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <div
+        id="card"
+        v-bind:style="{ 'background-image': 'url(' + background + ')' }"
+      >
+        <div id="overlay"></div>
+        <img
+          v-if="showLogo"
+          v-bind:src="logo"
+          v-bind:style="{ 'width': logoSize + 'px' }"
+          id="logo"
+        />
+
+        <div id="qr-code"></div>
+
+        <p id="name">
+          <span
+            v-bind:style="{ 'font-size': fontSize + 'px', 'font-family': font }"
+            id="name-content"
+            >{{name}}</span
+          >
+          <span class="hack">_</span>
+        </p>
+      </div>
+
+      <div id="form-card">
+        <div>
+          <h5>1. Logo</h5>
+          <div>
+            <label>Đổi logo (Ảnh PNG trong suốt, size &gt; 250px) </label>
+            <input type="file" @change="changeLogo" accept="image/*" />
+            <button v-on:click="showLogo = !showLogo">
+              Ẩn/Hiện Logo
+            </button>
+            <button v-on:click="logoSize -= 10">
+              - Thu nhỏ
+            </button>
+            <button v-on:click="logoSize += 10">
+              + Phóng to
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h5>
+            2. QR Code (Dùng
+            <a href="https://linktr.ee" target="_blank">linktree</a> hoặc
+            <a href="https://instabio.cc" target="_blank">instabio</a> hoặc web
+            tự code)
+          </h5>
+          <div>
+            <input v-model="url" placeholder="URL" id="url" />
+            <button v-on:click="updateQR(-10)">
+              - Thu nhỏ
+            </button>
+            <button v-on:click="updateQR(10)">
+              + Phóng to
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h5>3. Ảnh nền</h5>
+          <div id="background-select">
+            <img
+              v-bind:src="bg"
+              v-for="bg in backgrounds"
+              v-on:click="setBackground(bg)"
+            />
+          </div>
+          <label>Đổi ảnh nền (Ảnh tỷ lệ 11:7, size &gt; 1100px X 700px) </label>
+          <input type="file" @change="changeCustomBg" accept="image/*" />
+        </div>
+
+        <div>
+          <h5>4. Thông tin thẻ (Tên dài quá có thể thu nhỏ chữ)</h5>
+          <input v-model="name" placeholder="Tên trên thẻ" id="txt-name" />
+          <select v-model="font">
+            <option v-for="fnt in fonts" :value="fnt">Font: {{fnt}}</option>
+          </select>
+
+          <button v-on:click="fontSize -= 2">
+            - Thu nhỏ
+          </button>
+          <button v-on:click="fontSize += 2">
+            + Phóng to
+          </button>
+        </div>
+
+        <div>
+          <h5>5. Xuất file</h5>
+          <button v-on:click="exportCard">
+            Tạo thẻ (Ảnh)
+          </button>
+          <button v-on:click="exportPDF">
+            Tạo thẻ (PDF)
+          </button>
+
+          <p>
+            Nếu xuất file ảnh, các bạn in màu với <b>độ phân giải 300dpi</b> sẽ
+            được ảnh <b>tầm 8.7cm x 5.5cm</b>. <br />
+            Nếu xuất file PDF thì đem đi màu A4, chọn <b>Fit to Paper</b> khi in
+            là ok. <br />
+            Dán ảnh này lên thẻ NFC trắng <b>(8.55cm X 5.4cm)</b> là được nhé!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"
+      integrity="sha512-VKjwFVu/mmKGk0Z0BxgDzmn10e590qk3ou/jkmRugAkSTMSIRkd4nEnk+n7r5WBbJquusQEQjBidrBD3IQQISQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js"
+      integrity="sha512-is1ls2rgwpFZyixqKFEExPHVUUL+pPkBEPw47s/6NDQ4n1m6T/ySeDW3p54jp45z2EJ0RSOgilqee1WhtelXfA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"
+      integrity="sha512-01CJ9/g7e8cUmY0DFTMcUw/ikS799FHiOA0eyHsUWfOetgbx/t6oV4otQ5zXKQyIrQGTHSmRVPIgrgLcZi/WMA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="/script.js" defer></script>
+  </body>
+</html>
